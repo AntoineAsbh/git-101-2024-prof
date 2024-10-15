@@ -147,6 +147,7 @@ white_wine |>
   select(where(is.factor))
 ```
 
+select on the names or select on the properties on the content of the columns.
 ```{r}
 #| eval: false
 white_wine |> 
@@ -156,7 +157,7 @@ white_wine |>
 ### Selecting rows
 
 Simple selection is based on indices with `slice()`. 
-
+slice operates based on the numbering
 ```{r}
 white_wine |> 
   slice(1:5, 150:155) |>
@@ -204,5 +205,56 @@ white_wine |>
   geom_point(alpha=0.75) +
   scale_color_viridis_c() +
   facet_wrap(vars(`alcohol category`))
+```
+
+15/10/2024
+## Aggregation functions 
+aka summary functions: turn a possibly long vector into a single value (still a vector!).
+We have:
+- standard statistics: `max()`, `min()`, `median()`, etc.
+- logical operations: `any()` and `all()`
+- counts and ranks: `n()`
+
+### Simple summary use
+Based on the`summarise()`. function or inside a `mutate()` call.
+
+A |> f(B) |> g(c)
+--> g(f(A,B),c)
+```{r}
+white_wine |>
+  summarise(
+    median(alcohol),
+    sd(alcohol))
+```
+
+```{r}
+white_wine |>
+  select(alcohol) |>
+  mutate(m_a = median(alcohol))
+```
+
+```{r}
+white_wine |>
+  select(alcohol) |>
+  mutate(a_m_median = alcohol - median(alcohol),
+         .keep = "none")
+```
+
+```{r}
+white_wine |>
+  select(alcohol) |>
+  mutate(na = (alcohol - mean(alcohol))/sd(alcohol),
+         na_r = (alcohol - median(alcohol))/IQR(alcohol),
+         .keep = "none")
+```
+
+```{r}
+white_wine |>
+  summarise(
+    mean(alcohol),
+    sd(alcohol),
+    median(alcohol),
+    IQR(alcohol)
+    )
 ```
 
